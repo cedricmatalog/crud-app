@@ -1,5 +1,23 @@
 {
-  "posts": [{ "id": 1, "title": "json-server", "author": "typicode" }],
-  "comments": [{ "id": 1, "body": "some comment", "postId": 1 }],
-  "profile": { "name": "typicode" }
+  "dogs": [
+    {
+      "id": 1,
+      "name": "Koko",
+      "description": "Small, Brown",
+      "category": 1,
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Kaka",
+      "description": "Big, Black",
+      "category": 3,
+      "active": true
+    }
+  ],
+  "categories": [
+    { "id": 1, "name": "Toy" },
+    { "id": 2, "name": "Working" },
+    { "id": 3, "name": "Sporting" }
+  ]
 }
