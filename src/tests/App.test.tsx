@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from '../components/App';
+import App from '../App';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-test('renders Dogs text', async () => {
+test('renders Posts text', async () => {
   const queryClient = new QueryClient();
   render(
     <QueryClientProvider client={queryClient}>
@@ -11,5 +11,5 @@ test('renders Dogs text', async () => {
     </QueryClientProvider>
   );
   
-  expect(await screen.findByText(/Dogs/i)).toBeInTheDocument();
+  expect(await screen.findByText(/Posts/i)).toBeInTheDocument();
 });
