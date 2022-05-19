@@ -65,19 +65,21 @@ export default function PostList() {
     }
 
     if (
-      (text !== '' && active === 'true' && inactive === 'false') ||
-      (text === '' && active === 'true' && inactive === 'false')
+      (text !== '' || text === '') &&
+      active === 'true' &&
+      inactive === 'false'
     ) {
       results = filterPosts().filter(({ active }) => active);
       setSearchResults(results);
     }
 
     if (
-      (text !== '' && active === 'false' && inactive === 'true') ||
-      (text === '' && active === 'false' && inactive === 'true')
+      (text !== '' || text === '') &&
+      active === 'false' &&
+      inactive === 'true'
     ) {
       results = filterPosts().filter(({ active }) => !active);
-      setSearchResults(results ?? []);
+      setSearchResults(results);
     }
 
     if (text === '' && active === 'true' && inactive === 'true') {
