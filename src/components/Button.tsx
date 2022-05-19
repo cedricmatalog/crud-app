@@ -1,7 +1,16 @@
-export default function Button() {
+interface IButton {
+  text: string;
+  color: string;
+  onClick: () => void;
+}
+
+export default function Button({ text, color, onClick }: IButton) {
   return (
-    <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-      Add Post
+    <button
+      onClick={onClick}
+      className={`inline-block w-16 py-3 mt-6 mr-2 text-sm text-white bg-${color}-500 rounded text-center m`}
+    >
+      {text}
     </button>
   );
 }

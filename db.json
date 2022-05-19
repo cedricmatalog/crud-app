@@ -15,7 +15,7 @@
       "active": false
     }
   ],
-  "categories": [
+  "postsCategories": [
     { "id": 1, "name": "Tellus" },
     { "id": 2, "name": "Quis viverra" },
     { "id": 3, "name": "Vitae sapien" }

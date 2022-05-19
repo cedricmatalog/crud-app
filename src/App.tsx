@@ -10,8 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<PostList />} />
         <Route path="/posts/:id" element={<Post />} />
-        <Route path="/posts/add" element={<PostForm/>} />
-        <Route path="/posts/:id/edit" element={<PostForm/>} />
+        <Route path="/posts/add" element={<PostForm />} />
       </Routes>
     </BrowserRouter>
   );
