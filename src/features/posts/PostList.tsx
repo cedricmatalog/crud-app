@@ -1,7 +1,11 @@
 import { useQuery } from 'react-query';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getPosts, getPostsCategories } from '../../api/PostsAPI';
+import Button from '../../components/Button';
 import Card from '../../components/Card';
+import Container from '../../components/Container';
+import Header from '../../components/Header';
+import Loading from '../../components/Loading';
 import IPost from '../../interfaces/IPost';
 import IPostCategory from '../../interfaces/IPostCategory';
 
@@ -23,42 +27,44 @@ export default function PostList() {
     return postsCategoriesData?.find(({ id }) => id === categoryId)?.name;
   }
 
-  if (isPostsLoading && isPostsCategoriesLoading) return <>'Loading...'</>;
+  const isLoading = isPostsLoading && isPostsCategoriesLoading;
+  const isPostsDataEmpty = postsData?.length === 0;
 
   if (postsError && postsCategoriesError) return <>'An error has occurred: </>;
 
   return (
-    <section>
-      <div className="max-w-screen-xl px-4 py-8 mx-auto">
-        <div>
-          <h2 className="mt-1 text-2xl font-extrabold tracking-wide uppercase lg:text-3xl">
-            Posts
-          </h2>
-        </div>
+    <Container screen="xl">
+      <Header title="Posts" />
+      {isLoading && <Loading />}
+      {isPostsDataEmpty && (
+        <div className="relative p-8 text-center">
+          <h2 className="text-2xl font-medium">There's nothing here...</h2>
 
-        <div className="grid grid-cols-1 mt-8 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
-          {postsData?.map((post) => (
-            <div
-              key={post.id}
-              className="cursor-pointer"
-              onClick={() => navigate(`/posts/${post.id}`)}
-            >
-              <Card
-                data={{ ...post, categoryName: getPostCategory(post.category) }}
-              />
-            </div>
-          ))}
+          <p className="mt-4 text-sm text-gray-500">
+            Created posts will appear here, try creating one!
+          </p>
         </div>
-
-        <div className="flex justify-center">
-          <Link
-            to="/posts/add"
-            className="inline-block px-6 py-3 mt-6 text-sm text-white bg-black rounded"
+      )}
+      <div className="grid grid-cols-1 mt-8 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
+        {postsData?.map((post) => (
+          <div
+            key={post.id}
+            className="cursor-pointer"
+            onClick={() => navigate(`/posts/${post.id}`)}
           >
-            Create a Post
-          </Link>
-        </div>
+            <Card
+              data={{ ...post, categoryName: getPostCategory(post.category) }}
+            />
+          </div>
+        ))}
       </div>
-    </section>
+      <div className="flex justify-center">
+        <Button
+          text="Create"
+          color="green"
+          onClick={() => navigate('posts/add')}
+        />
+      </div>
+    </Container>
   );
 }

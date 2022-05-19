@@ -22,7 +22,7 @@ export default function PostForm({
           color="red"
           onClick={onClickCancel ? onClickCancel : () => navigate(-1)}
         />
-        <Button text="Create" color="green" onClick={() => {}} />
+        <Button text="Save" color="green" onClick={() => {}} />
       </div>
     </Container>
   );

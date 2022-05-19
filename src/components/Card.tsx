@@ -10,7 +10,7 @@ export default function Card({
       <div className="flex justify-center">
         <strong
           className={`relative h-6 px-4 text-xs leading-6 text-white uppercase ${
-            active ? 'bg-green-500' : 'bg-yellow-500'
+            active ? 'bg-lime-400' : 'bg-yellow-400'
           }`}
         >
           {active ? 'Active' : 'Inactive'}
