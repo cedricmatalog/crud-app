@@ -33,7 +33,7 @@ export default function PostList() {
   if (postsError && postsCategoriesError) return <>'An error has occurred: </>;
 
   return (
-    <Container screen="xl">
+    <Container screen='xl'>
       <Header title="Posts" />
       {isLoading && <Loading />}
       {isPostsDataEmpty && (
@@ -58,6 +58,7 @@ export default function PostList() {
           </div>
         ))}
       </div>
+      
       <div className="flex justify-center">
         <Button
           text="Create"

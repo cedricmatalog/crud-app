@@ -7,7 +7,10 @@ export default function Container({
   screen?: string;
   children: ReactNode;
 }) {
-  return (
-    <div className={`max-w-screen-${screen} px-4 py-8 mx-auto`}>{children}</div>
-  );
+  const sizes: Record<string, string> = {
+    md: 'max-w-screen-md',
+    xl: 'max-w-screen-xl',
+  };
+
+  return <div className={`${sizes[screen]} px-4 py-8 mx-auto`}>{children}</div>;
 }
