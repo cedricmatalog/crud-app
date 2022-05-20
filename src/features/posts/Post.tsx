@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPost, getPostCategory } from '../../api/PostsAPI';
+import { deletePost, getPost, getPostCategory } from '../../api/PostsAPI';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Container from '../../components/Container';
@@ -15,6 +15,13 @@ export default function Post() {
   const { id: postId } = useParams();
 
   const [isEditMode, setIsEditMode] = useState(false);
+  const deleteMutation = useMutation(deletePost, {
+    onSuccess: () => {
+      // Invalidate and refetch
+      // queryClient.invalidateQueries('posts');
+      navigate('/');
+    },
+  });
 
   const {
     isLoading: isPostLoading,
@@ -53,7 +60,13 @@ export default function Post() {
             color="blue"
             onClick={() => setIsEditMode(true)}
           />
-          <Button text="Delete" color="red" onClick={() => {}} />
+          <Button
+            text="Delete"
+            color="red"
+            onClick={() => {
+              deleteMutation.mutate(postData.id);
+            }}
+          />
         </div>
       </Container>
     );

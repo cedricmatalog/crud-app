@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { getPosts, getPostsCategories } from '../../api/PostsAPI';
+import { deletePost, getPosts, getPostsCategories } from '../../api/PostsAPI';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Container from '../../components/Container';
@@ -12,24 +12,18 @@ import IPostCategory from '../../interfaces/IPostCategory';
 
 export default function PostList() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const {
     isLoading: isPostsLoading,
     error: postsError,
     data: postsData,
   } = useQuery<IPost[], Error>('posts', getPosts);
-
   const {
     isLoading: isPostsCategoriesLoading,
     error: postsCategoriesError,
     data: postsCategoriesData,
   } = useQuery<IPostCategory[], Error>('postsCategories', getPostsCategories);
-
-  function getPostCategory(categoryId: number) {
-    return postsCategoriesData?.find(({ id }) => id === categoryId)?.name;
-  }
-
-  const isLoading = isPostsLoading && isPostsCategoriesLoading;
-  const isPostsDataEmpty = postsData?.length === 0;
 
   const [searchResults, setSearchResults] = useState<IPost[] | undefined>(
     postsData
@@ -39,22 +33,49 @@ export default function PostList() {
     active: 'false',
     inactive: 'false',
   });
+  const [isBulkDeleteMode, setIsBulkDeleteMode] = useState(false);
+  const [bulkDeleteList, setIsBulkDeleteList] = useState<number[]>([]);
+  const deleteMutation = useMutation(deletePost, {
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries('posts');
+    },
+  });
 
   useEffect(() => {
-    const { text, active, inactive } = filter;
-    if (text === '' && active === 'false' && inactive === 'false') {
-      setSearchResults(postsData);
-      return;
-    }
+    handleFilterChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, postsData]);
 
-    let results = [...(postsData ?? [])];
+  useEffect(() => {
+    setIsBulkDeleteList([]);
+  }, [isBulkDeleteMode]);
 
-    function filterPosts() {
+  useEffect(() => {
+    console.log(bulkDeleteList);
+  }, [bulkDeleteList]);
+
+  function getPostCategory(categoryId: number) {
+    return postsCategoriesData?.find(({ id }) => id === categoryId)?.name;
+  }
+
+  function handleFilterChange() {
+    const filterPosts = () => {
       return (
         postsData?.filter(
           ({ name }) => name.toLowerCase().search(text) !== -1
         ) ?? []
       );
+    };
+
+    const { text, active, inactive } = filter;
+    let results = [...(postsData ?? [])];
+
+    if (
+      (text === '' && active === 'false' && inactive === 'false') ||
+      (text === '' && active === 'true' && inactive === 'true')
+    ) {
+      setSearchResults(postsData);
     }
 
     if (
@@ -81,11 +102,7 @@ export default function PostList() {
       results = filterPosts().filter(({ active }) => !active);
       setSearchResults(results);
     }
-
-    if (text === '' && active === 'true' && inactive === 'true') {
-      setSearchResults(postsData);
-    }
-  }, [filter, postsData]);
+  }
 
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value, checked } = e.target;
@@ -96,11 +113,30 @@ export default function PostList() {
     });
   }
 
+  function handleBulkDeleteList(postId: number) {
+    return (e: ChangeEvent<HTMLInputElement>) => {
+      const { checked } = e.target;
+
+      if (checked) {
+        setIsBulkDeleteList([...bulkDeleteList, postId]);
+      } else {
+        setIsBulkDeleteList(bulkDeleteList.filter((id) => id !== postId));
+      }
+    };
+  }
+
+  function handleBulkDelete() {
+    return () => {
+      bulkDeleteList.forEach((id) => {
+        deleteMutation.mutate(id);
+      });
+    };
+  }
+
   if (postsError && postsCategoriesError) return <>'An error has occurred: </>;
 
-  return (
-    <Container screen="xl">
-      <Header title="Posts" />
+  function renderFilters() {
+    return (
       <div className="flex justify-center">
         <div className="w-full items-center mr-4">
           <input
@@ -138,7 +174,16 @@ export default function PostList() {
           </label>
         </div>
       </div>
+    );
+  }
 
+  const isLoading = isPostsLoading && isPostsCategoriesLoading;
+  const isPostsDataEmpty = postsData?.length === 0;
+
+  return (
+    <Container screen="xl">
+      <Header title="Posts" />
+      {renderFilters()}
       {isLoading && <Loading />}
       {isPostsDataEmpty && (
         <div className="relative p-8 text-center">
@@ -149,26 +194,49 @@ export default function PostList() {
           </p>
         </div>
       )}
-      <div className="grid grid-cols-1 mt-8 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
+      <div className="grid grid-cols-1 mt-10 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
         {searchResults?.map((post) => (
-          <div
-            key={post.id}
-            className="cursor-pointer"
-            onClick={() => navigate(`/posts/${post.id}`)}
-          >
-            <Card
-              data={{ ...post, categoryName: getPostCategory(post.category) }}
-            />
+          <div key={post.id}>
+            {isBulkDeleteMode && (
+              <input
+                id="toy"
+                type="checkbox"
+                name="inactive"
+                className="w-5 h-5 border-gray-300 rounded"
+                onChange={handleBulkDeleteList(post.id)}
+              />
+            )}
+
+            <div
+              className="cursor-pointer"
+              onClick={() => navigate(`/posts/${post.id}`)}
+            >
+              <Card
+                data={{ ...post, categoryName: getPostCategory(post.category) }}
+              />
+            </div>
           </div>
         ))}
       </div>
 
       <div className="flex justify-center">
+        <Button text="Create" onClick={() => navigate('posts/add')} />
+
         <Button
-          text="Create"
-          color="green"
-          onClick={() => navigate('posts/add')}
+          text={`${isBulkDeleteMode ? 'Cancel' : 'Bulk'} Delete`}
+          size="24"
+          color="red"
+          onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
         />
+
+        {bulkDeleteList.length > 0 && (
+          <Button
+            text="Delete Selected Posts"
+            size="48"
+            color="red"
+            onClick={handleBulkDelete()}
+          />
+        )}
       </div>
     </Container>
   );

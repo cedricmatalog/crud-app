@@ -1,14 +1,19 @@
 const baseUrl = 'http://localhost:4000/';
 
-const baseFetch = (url: string) =>
+const getRequest = (url: string) =>
   fetch(baseUrl + url).then((res) => res.json());
 
-const getPosts = () => baseFetch('posts');
+const getPosts = () => getRequest('posts');
 
-const getPostsCategories = () => baseFetch('postsCategories');
+const getPostsCategories = () => getRequest('postsCategories');
 
-const getPost = (id = '') => baseFetch(`posts/${id}`);
+const getPost = (id = '') => getRequest(`posts/${id}`);
 
-const getPostCategory = (id = '') => baseFetch(`postsCategories/${id}`);
+const getPostCategory = (id = '') => getRequest(`postsCategories/${id}`);
 
-export { getPosts, getPost, getPostsCategories, getPostCategory };
+const deleteRequest = (url: string) =>
+  fetch(baseUrl + url, { method: 'DELETE' }).then((res) => res.json());
+
+const deletePost = (id: number) => deleteRequest(`posts/${id}`);
+
+export { getPosts, getPost, getPostsCategories, getPostCategory, deletePost };
