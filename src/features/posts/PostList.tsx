@@ -220,22 +220,27 @@ export default function PostList() {
       </div>
 
       <div className="flex justify-center">
-        <Button text="Create" onClick={() => navigate('posts/add')} />
+        {bulkDeleteList.length === 0 && !isBulkDeleteMode && (
+          <Button text="Create" onClick={() => navigate('posts/add')} />
+        )}
 
-        <Button
-          text={`${isBulkDeleteMode ? 'Cancel' : 'Bulk'} Delete`}
-          size="24"
-          color="red"
-          onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
-        />
+        {isBulkDeleteMode ? (
+          <Button
+            text={`Cancel`}
+            color="white"
+            border="red"
+            onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
+          />
+        ) : (
+          <Button
+            text={`Delete`}
+            color="red"
+            onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
+          />
+        )}
 
         {bulkDeleteList.length > 0 && (
-          <Button
-            text="Delete Selected Posts"
-            size="48"
-            color="red"
-            onClick={handleBulkDelete()}
-          />
+          <Button text="Delete" color="red" onClick={handleBulkDelete()} />
         )}
       </div>
     </Container>
