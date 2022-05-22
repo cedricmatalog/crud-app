@@ -3,6 +3,7 @@ interface IButton {
   color?: string;
   size?: string;
   border?: string;
+  disabled?: boolean;
   onClick: () => void;
 }
 
@@ -30,12 +31,16 @@ export default function Button({
   color = 'green',
   size = '16',
   border = 'none',
+  disabled = false,
   onClick,
 }: IButton) {
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
-      className={`inline-block w-16 py-3 mt-6 mr-2 text-sm rounded text-center m ${colors[color]} ${sizes[size]} ${borders[border]}`}
+      className={`inline-block w-16 py-3 mt-6 mr-2 text-sm rounded text-center m 
+      ${colors[color]} ${sizes[size]} ${borders[border]} 
+      ${disabled ? 'cursor-not-allowed' : ''}`}
     >
       {text}
     </button>

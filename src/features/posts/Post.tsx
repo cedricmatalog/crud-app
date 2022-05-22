@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -16,12 +16,24 @@ export default function Post() {
   const { id: postId = '' } = useParams();
 
   const [isEditMode, setIsEditMode] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const deleteMutation = useMutation(deletePost, {
     onSuccess: () => {
       navigate('/');
     },
   });
+
+  useEffect(() => {
+    const timeId = setTimeout(() => {
+      // After 3 seconds set the show value to false
+      setShowToast(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeId);
+    };
+  }, [showToast]);
 
   const { postData } = usePost(postId);
 
@@ -38,11 +50,25 @@ export default function Post() {
   if (postData && postCategoryData) {
     if (isEditMode) {
       return (
-        <PostForm data={postData} onClickCancel={() => setIsEditMode(false)} />
+        <PostForm
+          data={postData}
+          onClickCancel={() => setIsEditMode(false)}
+          showToast={() => setShowToast(true)}
+        />
       );
     }
     return (
       <Container>
+        {showToast && (
+          <div
+            className="p-4 border rounded text-sky-700 bg-sky-50 border-sky-900/10"
+            role="alert"
+          >
+            <strong className="text-sm font-medium">
+              Post has been updated!
+            </strong>
+          </div>
+        )}
         <Header title="Post" />
         <Card data={{ ...postData, categoryName: postCategoryData.name }} />
         <div className="flex justify-end">

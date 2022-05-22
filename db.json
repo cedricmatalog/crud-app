@@ -1,11 +1,11 @@
 {
   "posts": [
     {
-      "id": 1,
-      "name": "Pellentesque",
-      "description": "Pellentesque sit amet porttitor eget dolor morbi",
-      "category": 1,
-      "active": true
+      "name": "Pellentesque1",
+      "description": "Pellentesque sit amet porttitadsdor eget dolor morbi",
+      "category": 2,
+      "active": false,
+      "id": 1
     },
     {
       "name": "Faucibus",
@@ -13,19 +13,6 @@
       "category": 1,
       "active": false,
       "id": 2
-    },
-    {
-      "name": "asdf",
-      "description": "sdafas",
-      "category": 2,
-      "active": true,
-      "id": 3
-    },
-    {
-      "name": "asdfasd",
-      "description": "sadfsadf",
-      "category": 2,
-      "id": 4
     }
   ],
   "postsCategories": [

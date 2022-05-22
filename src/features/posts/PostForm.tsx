@@ -12,9 +12,11 @@ import IPost from '../../interfaces/IPost';
 export default function PostForm({
   data,
   onClickCancel,
+  showToast,
 }: {
   data?: IPost;
   onClickCancel?: () => void;
+  showToast?: () => void;
 }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<IPost>(data!);
@@ -69,15 +71,19 @@ export default function PostForm({
   };
 
   const handleUpdate = () => {
-    console.log(formData);
+    if (showToast) showToast();
     updateMutation.mutate(formData);
   };
 
   const handleCreate = () => {
-    createMutation.mutate(formData);
+    const formDataCopy = { ...formData };
+    const { category, active } = formDataCopy;
+    if (!category) formDataCopy.category = 1;
+    if (!active) formDataCopy.active = false;
+    createMutation.mutate(formDataCopy);
   };
 
-  const isFormDataValid = name !== '';
+  const isFormDataValid = name !== '' && description !== '';
 
   return (
     <Container>
@@ -170,6 +176,7 @@ export default function PostForm({
           onClick={onClickCancel ? onClickCancel : () => navigate(-1)}
         />
         <Button
+          disabled={!isFormDataValid}
           text={data ? 'Update' : 'Create'}
           color="green"
           onClick={() => {
