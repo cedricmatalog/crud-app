@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { deletePost } from '../../api/PostsAPI';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
+import Checkbox from '../../components/Checkbox';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
 import Loading from '../../components/Loading';
@@ -50,14 +51,14 @@ export default function PostList() {
     return postsCategoriesData?.find(({ id }) => id === categoryId)?.name;
   }
 
-  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = e.target;
 
     setFilter({
       ...filter,
       [name]: name === 'text' ? value.toLowerCase() : `${checked}`,
     });
-  }
+  };
 
   function handleBulkDeleteList(postId: number) {
     return (e: ChangeEvent<HTMLInputElement>) => {
@@ -93,32 +94,13 @@ export default function PostList() {
             onChange={handleInputChange}
           />
         </div>
-        <div className="flex items-center mr-2">
-          <input
-            id="toy"
-            type="checkbox"
-            name="active"
-            className="w-5 h-5 border-gray-300 rounded"
-            onChange={handleInputChange}
-          />
 
-          <label htmlFor="toy" className="ml-3 text-sm font-medium">
-            Active
-          </label>
-        </div>
-        <div className="flex items-center">
-          <input
-            id="toy"
-            type="checkbox"
-            name="inactive"
-            className="w-5 h-5 border-gray-300 rounded"
-            onChange={handleInputChange}
-          />
-
-          <label htmlFor="toy" className="ml-3 text-sm font-medium">
-            Inactive
-          </label>
-        </div>
+        <Checkbox name="active" onChange={handleInputChange} label="Active" />
+        <Checkbox
+          name="inactive"
+          onChange={handleInputChange}
+          label="Inactive"
+        />
       </div>
     );
   }
@@ -154,8 +136,12 @@ export default function PostList() {
             )}
 
             <div
-              className="cursor-pointer"
-              onClick={() => navigate(`/posts/${post.id}`)}
+              className={isBulkDeleteMode ? '' : 'cursor-pointer'}
+              onClick={
+                isBulkDeleteMode
+                  ? () => {}
+                  : () => navigate(`/posts/${post.id}`)
+              }
             >
               <Card
                 data={{ ...post, categoryName: getPostCategory(post.category) }}

@@ -85,88 +85,100 @@ export default function PostForm({
 
   const isFormDataValid = name !== '' && description !== '';
 
+  const renderNameField = () => (
+    <div>
+      <label className="sr-only" htmlFor="name">
+        Name
+      </label>
+      <input
+        name="name"
+        className="w-full p-3 text-sm border-gray-200 rounded-lg outline outline-offset-2 outline-1"
+        placeholder="Name"
+        type="text"
+        value={name}
+        onChange={handleInputChange}
+        id="name"
+      />
+    </div>
+  );
+
+  const renderCategoryField = () => (
+    <div>
+      <label className="relative" htmlFor="sort">
+        Category:
+        <span className="sr-only"> Sort </span>
+        <select
+          className="py-3 ml-2 mr-3 pl-5 pr-10 text-xs font-medium border-gray-200 rounded-lg  hover:z-10 focus:outline-none focus:border-indigo-600 focus:z-10 hover:bg-gray-50 focus:ring-0 outline outline-offset-2 outline-1"
+          name="category"
+          value={getCategory()}
+          onChange={handleSelectChange}
+        >
+          {postsCategoriesData?.map(({ id, name }) => (
+            <option key={id} value={id}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </label>
+    </div>
+  );
+
+  const renderStatusField = () => (
+    <div>
+      <div className="flex items-center justify-center w-full">
+        Status:
+        <label htmlFor="toogleA" className="flex items-center cursor-pointer">
+          <div className="relative  ml-2 ">
+            <input
+              id="toogleA"
+              type="checkbox"
+              className="sr-only"
+              checked={active}
+              name="active"
+              onChange={handleInputChange}
+            />
+
+            <div className="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+
+            <div className="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+          </div>
+
+          <div className="ml-3 text-gray-700 font-medium">
+            {active ? 'Active' : 'Inactive'}
+          </div>
+        </label>
+      </div>
+    </div>
+  );
+
+  const renderDescriptionField = () => (
+    <div>
+      <label className="sr-only" htmlFor="message">
+        Description
+      </label>
+      <textarea
+        className="w-full p-3 text-sm border-gray-200 rounded-lg outline outline-offset-2 outline-1"
+        placeholder="Message"
+        rows={8}
+        id="message"
+        name="description"
+        onChange={handleTextAreaChange}
+        value={description}
+      ></textarea>
+    </div>
+  );
+
   return (
     <Container>
       <Header title={data ? 'Edit Post' : 'Create Post'} />
 
       <div className="space-y-4">
-        <div>
-          <label className="sr-only" htmlFor="name">
-            Name
-          </label>
-          <input
-            name="name"
-            className="w-full p-3 text-sm border-gray-200 rounded-lg outline outline-offset-2 outline-1"
-            placeholder="Name"
-            type="text"
-            value={name}
-            onChange={handleInputChange}
-            id="name"
-          />
-        </div>
+        {renderNameField()}
         <div className="flex items-center">
-          <div>
-            <label className="relative" htmlFor="sort">
-              Category:
-              <span className="sr-only"> Sort </span>
-              <select
-                className="py-3 ml-2 mr-3 pl-5 pr-10 text-xs font-medium border-gray-200 rounded-lg  hover:z-10 focus:outline-none focus:border-indigo-600 focus:z-10 hover:bg-gray-50 focus:ring-0 outline outline-offset-2 outline-1"
-                name="category"
-                value={getCategory()}
-                onChange={handleSelectChange}
-              >
-                {postsCategoriesData?.map(({ id, name }) => (
-                  <option key={id} value={id}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <div>
-            <div className="flex items-center justify-center w-full">
-              Status:
-              <label
-                htmlFor="toogleA"
-                className="flex items-center cursor-pointer"
-              >
-                <div className="relative  ml-2 ">
-                  <input
-                    id="toogleA"
-                    type="checkbox"
-                    className="sr-only"
-                    checked={active}
-                    name="active"
-                    onChange={handleInputChange}
-                  />
-
-                  <div className="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
-
-                  <div className="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
-                </div>
-
-                <div className="ml-3 text-gray-700 font-medium">
-                  {active ? 'Active' : 'Inactive'}
-                </div>
-              </label>
-            </div>
-          </div>
+          {renderCategoryField()}
+          {renderStatusField()}
         </div>
-
-        <div>
-          <label className="sr-only" htmlFor="message">
-            Message
-          </label>
-          <textarea
-            className="w-full p-3 text-sm border-gray-200 rounded-lg outline outline-offset-2 outline-1"
-            placeholder="Message"
-            rows={8}
-            id="message"
-            name="description"
-            onChange={handleTextAreaChange}
-            value={description}
-          ></textarea>
-        </div>
+        {renderDescriptionField()}
       </div>
 
       <div className="flex justify-end">

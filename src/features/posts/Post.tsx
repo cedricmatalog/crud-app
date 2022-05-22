@@ -25,13 +25,12 @@ export default function Post() {
   });
 
   useEffect(() => {
-    const timeId = setTimeout(() => {
-      // After 3 seconds set the show value to false
+    const toastId = setTimeout(() => {
       setShowToast(false);
     }, 3000);
 
     return () => {
-      clearTimeout(timeId);
+      clearTimeout(toastId);
     };
   }, [showToast]);
 
