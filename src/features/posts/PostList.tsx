@@ -105,7 +105,7 @@ export default function PostList() {
     );
   }
 
-  const isLoading = isPostsLoading && isPostsCategoriesLoading;
+  const isLoading = isPostsLoading || isPostsCategoriesLoading;
   const isPostsDataEmpty = postsData?.length === 0;
 
   return (
