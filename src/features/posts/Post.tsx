@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { deletePost, getPostCategory } from '../../api/PostsAPI';
+import { deletePost } from '../../api/PostsAPI';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Container from '../../components/Container';
@@ -10,7 +10,8 @@ import Error from '../../components/Error';
 import Header from '../../components/Header';
 import Loading from '../../components/Loading';
 import usePost from '../../hooks/posts/usePost';
-import IPostCategory from '../../interfaces/IPostCategory';
+import usePostCategory from '../../hooks/posts/usePostCategory';
+
 import PostForm from './PostForm';
 
 export default function Post() {
@@ -26,6 +27,9 @@ export default function Post() {
     },
   });
 
+  const { isPostLoading, postError, postData } = usePost(postId);
+  const { isPostCategoryDataLoading, postCategoryError, postCategoryData } = usePostCategory(postData?.category);
+
   useEffect(() => {
     const toastId = setTimeout(() => {
       setShowToast(false);
@@ -35,19 +39,6 @@ export default function Post() {
       clearTimeout(toastId);
     };
   }, [showToast]);
-
-  const { isPostLoading, postError, postData } = usePost(postId);
-
-  const postCategoryId = postData?.category;
-
-  const { isLoading: isPostCategoryDataLoading, data: postCategoryData } =
-    useQuery<IPostCategory, Error>(
-      ['postCategory', postCategoryId],
-      () => getPostCategory(`${postCategoryId}`),
-      {
-        enabled: !!postCategoryId,
-      }
-    );
 
   return (
     <Container>
@@ -63,7 +54,7 @@ export default function Post() {
       )}
       {!isEditMode && <Header title="Post" />}
       {(isPostLoading || isPostCategoryDataLoading) && <Loading />}
-      {postError && <Error />}
+      {(postError || postCategoryError) && <Error />}
 
       {postData && postCategoryData && (
         <>
