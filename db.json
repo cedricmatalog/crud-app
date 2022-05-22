@@ -8,16 +8,38 @@
       "active": true
     },
     {
-      "id": 2,
       "name": "Faucibus",
       "description": "nisl tincidunt eget nullam non nisi",
-      "category": 3,
-      "active": false
+      "category": 1,
+      "active": false,
+      "id": 2
+    },
+    {
+      "name": "asdf",
+      "description": "sdafas",
+      "category": 2,
+      "active": true,
+      "id": 3
+    },
+    {
+      "name": "asdfasd",
+      "description": "sadfsadf",
+      "category": 2,
+      "id": 4
     }
   ],
   "postsCategories": [
-    { "id": 1, "name": "Tellus" },
-    { "id": 2, "name": "Quis viverra" },
-    { "id": 3, "name": "Vitae sapien" }
+    {
+      "id": 1,
+      "name": "Tellus"
+    },
+    {
+      "id": 2,
+      "name": "Quis viverra"
+    },
+    {
+      "id": 3,
+      "name": "Vitae sapien"
+    }
   ]
 }

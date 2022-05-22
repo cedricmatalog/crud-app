@@ -1,4 +1,8 @@
+import { ChangeEvent, useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { createPost, updatePost } from '../../api/PostsAPI';
+
 import Button from '../../components/Button';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
@@ -13,11 +17,67 @@ export default function PostForm({
   onClickCancel?: () => void;
 }) {
   const navigate = useNavigate();
-  const {
-    isPostsCategoriesLoading,
-    postsCategoriesError,
-    postsCategoriesData,
-  } = usePostsCategories();
+  const [formData, setFormData] = useState<IPost>(data!);
+  const { postsCategoriesData } = usePostsCategories();
+  const queryClient = useQueryClient();
+  const updateMutation = useMutation(updatePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('post');
+      if (onClickCancel) onClickCancel();
+    },
+  });
+
+  const createMutation = useMutation(createPost, {
+    onSuccess: () => {
+      navigate('/');
+    },
+  });
+
+  const { name = '', category, description, active = false } = formData || {};
+
+  const getCategory = () => {
+    if (postsCategoriesData !== undefined) {
+      return postsCategoriesData.find(({ id }) => id === category)?.id;
+    }
+  };
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: name !== 'active' ? value : checked,
+    });
+  };
+
+  const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleUpdate = () => {
+    console.log(formData);
+    updateMutation.mutate(formData);
+  };
+
+  const handleCreate = () => {
+    createMutation.mutate(formData);
+  };
+
+  const isFormDataValid = name !== '';
 
   return (
     <Container>
@@ -29,9 +89,12 @@ export default function PostForm({
             Name
           </label>
           <input
+            name="name"
             className="w-full p-3 text-sm border-gray-200 rounded-lg outline outline-offset-2 outline-1"
             placeholder="Name"
             type="text"
+            value={name}
+            onChange={handleInputChange}
             id="name"
           />
         </div>
@@ -42,11 +105,12 @@ export default function PostForm({
               <span className="sr-only"> Sort </span>
               <select
                 className="py-3 ml-2 mr-3 pl-5 pr-10 text-xs font-medium border-gray-200 rounded-lg  hover:z-10 focus:outline-none focus:border-indigo-600 focus:z-10 hover:bg-gray-50 focus:ring-0 outline outline-offset-2 outline-1"
-                id="sort"
-                name="sort"
+                name="category"
+                value={getCategory()}
+                onChange={handleSelectChange}
               >
                 {postsCategoriesData?.map(({ id, name }) => (
-                  <option key={id} value={name}>
+                  <option key={id} value={id}>
                     {name}
                   </option>
                 ))}
@@ -61,14 +125,23 @@ export default function PostForm({
                 className="flex items-center cursor-pointer"
               >
                 <div className="relative  ml-2 ">
-                  <input id="toogleA" type="checkbox" className="sr-only" />
+                  <input
+                    id="toogleA"
+                    type="checkbox"
+                    className="sr-only"
+                    checked={active}
+                    name="active"
+                    onChange={handleInputChange}
+                  />
 
                   <div className="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
 
                   <div className="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
                 </div>
 
-                <div className="ml-3 text-gray-700 font-medium">Toggle Me!</div>
+                <div className="ml-3 text-gray-700 font-medium">
+                  {active ? 'Active' : 'Inactive'}
+                </div>
               </label>
             </div>
           </div>
@@ -83,6 +156,9 @@ export default function PostForm({
             placeholder="Message"
             rows={8}
             id="message"
+            name="description"
+            onChange={handleTextAreaChange}
+            value={description}
           ></textarea>
         </div>
       </div>
@@ -96,7 +172,13 @@ export default function PostForm({
         <Button
           text={data ? 'Update' : 'Create'}
           color="green"
-          onClick={() => {}}
+          onClick={() => {
+            if (data) {
+              handleUpdate();
+            } else {
+              handleCreate();
+            }
+          }}
         />
       </div>
     </Container>

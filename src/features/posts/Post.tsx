@@ -1,39 +1,33 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import { deletePost, getPost, getPostCategory } from '../../api/PostsAPI';
+
+import { deletePost, getPostCategory } from '../../api/PostsAPI';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
-import IPost from '../../interfaces/IPost';
+import usePost from '../../hooks/posts/usePost';
 import IPostCategory from '../../interfaces/IPostCategory';
 import PostForm from './PostForm';
 
 export default function Post() {
   const navigate = useNavigate();
-  const { id: postId } = useParams();
+  const { id: postId = '' } = useParams();
 
   const [isEditMode, setIsEditMode] = useState(false);
+
   const deleteMutation = useMutation(deletePost, {
     onSuccess: () => {
       navigate('/');
     },
   });
 
-  const {
-    isLoading: isPostLoading,
-    error: postError,
-    data: postData,
-  } = useQuery<IPost, Error>(['post', postId], () => getPost(postId));
+  const { postData } = usePost(postId);
 
   const postCategoryId = postData?.category;
 
-  const {
-    isLoading: isPostCategoryLoading,
-    error: postCategoryError,
-    data: postCategoryData,
-  } = useQuery<IPostCategory, Error>(
+  const { data: postCategoryData } = useQuery<IPostCategory, Error>(
     ['postCategory', postCategoryId],
     () => getPostCategory(`${postCategoryId}`),
     {

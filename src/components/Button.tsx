@@ -7,7 +7,7 @@ interface IButton {
 }
 
 const colors: Record<string, string> = {
-  white: 'bg-white',
+  white: '',
   green: 'bg-green-500',
   red: 'bg-red-500',
   blue: 'bg-blue-500',
@@ -21,8 +21,8 @@ const sizes: Record<string, string> = {
 };
 
 const borders: Record<string, string> = {
-  none: '',
-  red: 'border  border-red-500 text-red-500',
+  none: 'text-white',
+  red: 'border border-red-500 text-red-500',
 };
 
 export default function Button({
@@ -35,7 +35,7 @@ export default function Button({
   return (
     <button
       onClick={onClick}
-      className={`inline-block w-16 py-3 mt-6 mr-2 text-sm text-white rounded text-center m ${colors[color]} ${sizes[size]} ${borders[border]}`}
+      className={`inline-block w-16 py-3 mt-6 mr-2 text-sm rounded text-center m ${colors[color]} ${sizes[size]} ${borders[border]}`}
     >
       {text}
     </button>
