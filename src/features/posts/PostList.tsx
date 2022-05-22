@@ -1,34 +1,30 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { deletePost, getPosts, getPostsCategories } from '../../api/PostsAPI';
+import { deletePost } from '../../api/PostsAPI';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
 import Loading from '../../components/Loading';
+import usePosts from '../../hooks/posts/usePosts';
+import usePostsCategories from '../../hooks/posts/usePostsCategories';
 import IPost from '../../interfaces/IPost';
-import IPostCategory from '../../interfaces/IPostCategory';
+import { Filter, handleFilterChange } from './PostsUtils';
 
 export default function PostList() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const { isPostsLoading, postsError, postsData } = usePosts();
   const {
-    isLoading: isPostsLoading,
-    error: postsError,
-    data: postsData,
-  } = useQuery<IPost[], Error>('posts', getPosts);
-  const {
-    isLoading: isPostsCategoriesLoading,
-    error: postsCategoriesError,
-    data: postsCategoriesData,
-  } = useQuery<IPostCategory[], Error>('postsCategories', getPostsCategories);
+    isPostsCategoriesLoading,
+    postsCategoriesError,
+    postsCategoriesData,
+  } = usePostsCategories();
 
-  const [searchResults, setSearchResults] = useState<IPost[] | undefined>(
-    postsData
-  );
-  const [filter, setFilter] = useState<Record<string, string>>({
+  const [searchResults, setSearchResults] = useState<IPost[]>(postsData);
+  const [filter, setFilter] = useState<Filter>({
     text: '',
     active: 'false',
     inactive: 'false',
@@ -37,13 +33,12 @@ export default function PostList() {
   const [bulkDeleteList, setIsBulkDeleteList] = useState<number[]>([]);
   const deleteMutation = useMutation(deletePost, {
     onSuccess: () => {
-      // Invalidate and refetch
       queryClient.invalidateQueries('posts');
     },
   });
 
   useEffect(() => {
-    handleFilterChange();
+    handleFilterChange(postsData, filter, setSearchResults);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, postsData]);
 
@@ -51,57 +46,8 @@ export default function PostList() {
     setIsBulkDeleteList([]);
   }, [isBulkDeleteMode]);
 
-  useEffect(() => {
-    console.log(bulkDeleteList);
-  }, [bulkDeleteList]);
-
   function getPostCategory(categoryId: number) {
     return postsCategoriesData?.find(({ id }) => id === categoryId)?.name;
-  }
-
-  function handleFilterChange() {
-    const filterPosts = () => {
-      return (
-        postsData?.filter(
-          ({ name }) => name.toLowerCase().search(text) !== -1
-        ) ?? []
-      );
-    };
-
-    const { text, active, inactive } = filter;
-    let results = [...(postsData ?? [])];
-
-    if (
-      (text === '' && active === 'false' && inactive === 'false') ||
-      (text === '' && active === 'true' && inactive === 'true')
-    ) {
-      setSearchResults(postsData);
-    }
-
-    if (
-      (text !== '' && active === 'false' && inactive === 'false') ||
-      (text !== '' && active === 'true' && inactive === 'true')
-    ) {
-      setSearchResults(filterPosts);
-    }
-
-    if (
-      (text !== '' || text === '') &&
-      active === 'true' &&
-      inactive === 'false'
-    ) {
-      results = filterPosts().filter(({ active }) => active);
-      setSearchResults(results);
-    }
-
-    if (
-      (text !== '' || text === '') &&
-      active === 'false' &&
-      inactive === 'true'
-    ) {
-      results = filterPosts().filter(({ active }) => !active);
-      setSearchResults(results);
-    }
   }
 
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {

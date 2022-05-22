@@ -17,8 +17,6 @@ export default function Post() {
   const [isEditMode, setIsEditMode] = useState(false);
   const deleteMutation = useMutation(deletePost, {
     onSuccess: () => {
-      // Invalidate and refetch
-      // queryClient.invalidateQueries('posts');
       navigate('/');
     },
   });
