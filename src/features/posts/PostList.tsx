@@ -113,7 +113,7 @@ export default function PostList() {
       <Header title="Posts" />
       {renderFilters()}
       {isLoading && <Loading />}
-      {isPostsDataEmpty && (
+      {isPostsDataEmpty && !isLoading && (
         <div className="relative p-8 text-center">
           <h2 className="text-2xl font-medium">There's nothing here...</h2>
 
@@ -151,30 +151,32 @@ export default function PostList() {
         ))}
       </div>
 
-      <div className="flex justify-center">
-        {bulkDeleteList.length === 0 && !isBulkDeleteMode && (
-          <Button text="Create" onClick={() => navigate('posts/add')} />
-        )}
+      {!isLoading && (
+        <div className="flex justify-center">
+          {bulkDeleteList.length === 0 && !isBulkDeleteMode && (
+            <Button text="Create" onClick={() => navigate('posts/add')} />
+          )}
 
-        {isBulkDeleteMode ? (
-          <Button
-            text={`Cancel`}
-            color="white"
-            border="red"
-            onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
-          />
-        ) : (
-          <Button
-            text={`Delete`}
-            color="red"
-            onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
-          />
-        )}
+          {isBulkDeleteMode ? (
+            <Button
+              text={`Cancel`}
+              color="white"
+              border="red"
+              onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
+            />
+          ) : (
+            <Button
+              text={`Delete`}
+              color="red"
+              onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
+            />
+          )}
 
-        {bulkDeleteList.length > 0 && (
-          <Button text="Delete" color="red" onClick={handleBulkDelete()} />
-        )}
-      </div>
+          {bulkDeleteList.length > 0 && (
+            <Button text="Delete" color="red" onClick={handleBulkDelete()} />
+          )}
+        </div>
+      )}
     </Container>
   );
 }

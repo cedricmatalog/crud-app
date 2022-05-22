@@ -7,9 +7,7 @@ export default function usePosts() {
     isLoading: isPostsLoading,
     error: postsError,
     data: postsData,
-  } = useQuery<IPost[], Error>('posts', getPosts, {
-    initialData: [],
-  });
+  } = useQuery<IPost[], Error>('posts', getPosts);
 
   return { isPostsLoading, postsError, postsData: postsData ?? [] };
 }
