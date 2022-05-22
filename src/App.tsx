@@ -6,13 +6,11 @@ import PostList from './features/posts/PostList';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<PostList />} />
-        <Route path="/posts/:id" element={<Post />} />
-        <Route path="/posts/add" element={<PostForm />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<PostList />} />
+      <Route path="/posts/:id" element={<Post />} />
+      <Route path="/posts/add" element={<PostForm />} />
+    </Routes>
   );
 }
 
