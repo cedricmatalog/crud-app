@@ -1,5 +1,11 @@
 import IPost from '../interfaces/IPost';
 
+const options = (method: string, data: Record<string, any>) => ({
+  method: method,
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(data),
+});
+
 const baseUrl = 'http://localhost:4000/';
 
 const getRequest = (url: string) =>
@@ -19,11 +25,7 @@ const deleteRequest = (url: string) =>
 const deletePost = (id: number) => deleteRequest(`posts/${id}`);
 
 const updateRequest = (url: string, data: Record<string, any>) =>
-  fetch(baseUrl + url, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  fetch(baseUrl + url, options('PUT', data));
 
 const updatePost = ({ id, name, description, category, active }: IPost) =>
   updateRequest(`posts/${id}`, {
@@ -34,11 +36,7 @@ const updatePost = ({ id, name, description, category, active }: IPost) =>
   });
 
 const postRequest = (url: string, data: Record<string, any>) =>
-  fetch(baseUrl + url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  fetch(baseUrl + url, options('POST', data));
 
 const createPost = ({ name, description, category, active }: IPost) =>
   postRequest(`posts`, {
