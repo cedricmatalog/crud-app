@@ -39,8 +39,12 @@ export default function PostList() {
   });
 
   useEffect(() => {
-    if (postsData.length > 0) {
+    if (postsData.length >= 0) {
       handleFilterChange(postsData, filter, setSearchResults);
+    }
+
+    if (postsData.length === 0) {
+      setIsBulkDeleteMode(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, postsData]);
@@ -167,11 +171,15 @@ export default function PostList() {
               onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
             />
           ) : (
-            <Button
-              text={`Delete`}
-              color="red"
-              onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
-            />
+            <>
+              {!isPostsDataEmpty && (
+                <Button
+                  text={`Delete`}
+                  color="red"
+                  onClick={() => setIsBulkDeleteMode(!isBulkDeleteMode)}
+                />
+              )}
+            </>
           )}
 
           {bulkDeleteList.length > 0 && (
