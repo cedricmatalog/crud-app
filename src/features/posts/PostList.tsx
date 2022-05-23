@@ -31,7 +31,7 @@ export default function PostList() {
     inactive: 'false',
   });
   const [isBulkDeleteMode, setIsBulkDeleteMode] = useState(false);
-  const [bulkDeleteList, setIsBulkDeleteList] = useState<number[]>([]);
+  const [bulkDeleteList, setBulkDeleteList] = useState<number[]>([]);
   const deleteMutation = useMutation(deletePost, {
     onSuccess: () => {
       queryClient.invalidateQueries('posts');
@@ -50,7 +50,7 @@ export default function PostList() {
   }, [filter, postsData]);
 
   useEffect(() => {
-    setIsBulkDeleteList([]);
+    setBulkDeleteList([]);
   }, [isBulkDeleteMode]);
 
   function getPostCategory(categoryId: number) {
@@ -71,9 +71,9 @@ export default function PostList() {
       const { checked } = e.target;
 
       if (checked) {
-        setIsBulkDeleteList([...bulkDeleteList, postId]);
+        setBulkDeleteList([...bulkDeleteList, postId]);
       } else {
-        setIsBulkDeleteList(bulkDeleteList.filter((id) => id !== postId));
+        setBulkDeleteList(bulkDeleteList.filter((id) => id !== postId));
       }
     };
   }
