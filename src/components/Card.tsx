@@ -1,12 +1,12 @@
 import IPost from '../interfaces/IPost';
 
 export default function Card({
-  data: { active, name, description, categoryName },
+  data: { active, name, description, categoryName, overflow },
 }: {
-  data: IPost & { categoryName?: string };
+  data: IPost & { categoryName?: string; overflow?: boolean };
 }) {
   return (
-    <div data-testid="card  ">
+    <div data-testid="card">
       <div className="flex justify-center">
         <strong
           className={`relative h-6 px-4 text-xs leading-6 text-white uppercase ${
@@ -21,7 +21,11 @@ export default function Card({
       <div className="flex items-center  mt-4 font-bold">
         <p className="text-xs tracking-wide uppercase">{categoryName}</p>
       </div>
-      <h4 className="mt-1 text-sm text-black/90 h-40 overflow-auto">
+      <h4
+        className={`mt-1 text-sm text-black/90 ${
+          overflow ? 'h-40 overflow-auto' : ''
+        } `}
+      >
         {description}
       </h4>
     </div>

@@ -150,7 +150,11 @@ export default function PostList() {
               }
             >
               <Card
-                data={{ ...post, categoryName: getPostCategory(post.category) }}
+                data={{
+                  ...post,
+                  categoryName: getPostCategory(post.category),
+                  overflow: true,
+                }}
               />
             </div>
           </div>
