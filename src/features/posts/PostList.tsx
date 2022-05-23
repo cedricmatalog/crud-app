@@ -39,7 +39,9 @@ export default function PostList() {
   });
 
   useEffect(() => {
-    handleFilterChange(postsData, filter, setSearchResults);
+    if (postsData.length > 0) {
+      handleFilterChange(postsData, filter, setSearchResults);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, postsData]);
 

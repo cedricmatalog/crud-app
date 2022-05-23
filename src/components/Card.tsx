@@ -6,7 +6,7 @@ export default function Card({
   data: IPost & { categoryName?: string };
 }) {
   return (
-    <div>
+    <div data-testid="card">
       <div className="flex justify-center">
         <strong
           className={`relative h-6 px-4 text-xs leading-6 text-white uppercase ${

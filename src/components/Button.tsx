@@ -36,6 +36,7 @@ export default function Button({
 }: IButton) {
   return (
     <button
+      data-testid={text}
       disabled={disabled}
       onClick={onClick}
       className={`inline-block w-16 py-3 mt-6 mr-2 text-sm rounded text-center m 
